@@ -20,41 +20,12 @@ plugins {
     id 'groovy'
     id 'idea'
     id 'java-gradle-plugin'
-    id 'org.kordamp.gradle.kordamp-parentpom' version '1.1.2'
     id 'com.gradle.plugin-publish'            version '0.10.0'
 }
 
-config {
-    info {
-        name          = rootProject.name
-        description   = pluginDescription
-        inceptionYear = '2017'
-        tags          = ['jdeps', 'jdktool', 'jigsaw', 'modules']
-
-        specification { enabled = false }
-    }
-
-    groovydoc {
-        replaceJavadoc = true
-    }
-}
-
-dependencyUpdates.resolutionStrategy = {
-    componentSelection { rules ->
-        rules.all { selection ->
-            boolean rejected = ['alpha', 'beta', 'rc', 'cr'].any { qualifier ->
-                selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
-            }
-            if (rejected) {
-                selection.reject('Release candidate')
-            }
-        }
-    }
-}
-
 dependencies {
+    compile group: 'org.zeroturnaround', name: 'zt-exec', version: '1.10'
     compile gradleApi()
-    compile "org.zeroturnaround:zt-exec:$ztexecVersion"
 }
 
 compileGroovy {
@@ -62,43 +33,28 @@ compileGroovy {
     targetCompatibility = project.targetCompatibility
 }
 
-task publishRelease(dependsOn: [bintrayUpload, publishPlugins]) {}
-
 afterEvaluate {
     gradlePlugin {
         plugins {
             jdepsPlugin {
                 id                  = pluginId
                 implementationClass = pluginImplementationClass
-            }
-        }
-    }
-
-    bintray {
-        pkg {
-            version {
-                attributes = ['gradle-plugin': "${project.pluginId}:${project.group}:${project.name}"]
+                displayName         = "Testing JDEPS plugin"
             }
         }
     }
 
     pluginBundle {
-        website     = project.mergedConfiguration.info.links.website
-        vcsUrl      = project.mergedConfiguration.info.links.scm
-        description = project.mergedConfiguration.info.description
-        tags        = project.mergedConfiguration.info.tags
-
-        plugins {
-            jdepsPlugin {
-                id          = project.pluginId
-                displayName = project.mergedConfiguration.info.description
-            }
-        }
-
-        mavenCoordinates {
-            groupId    = project.group
-            artifactId = project.name
-            version    = project.version
-        }
+        website     = "https://github.com/andretadeu/jdeps-gradle-plugin"
+        vcsUrl      = "https://github.com/andretadeu/jdeps-gradle-plugin"
+        description = "Test"
+        tags        = ['jdeps', 'jdktool', 'jigsaw', 'modules']
     }
 }
+
+repositories {
+    mavenCentral()
+}
+
+// gradle.startParameter.excludedTaskNames += 'licenseMain'
+// gradle.startParameter.excludedTaskNames += 'licenseTest'
