@@ -98,8 +98,8 @@ class JDepsReportTask extends DefaultTask {
                 }
 
                 String output = JDepsReportTask.runJDepsOn(baseCmd, file.absolutePath)
+                println("baseCmd from sourceSets")
                 println(baseCmd.join('\n'))
-                commandOutput << baseCmd.join('\n')
                 if (output) {
                     commandOutput << "\nProject: ${project.name}\n${output}".toString()
                 }
@@ -113,8 +113,8 @@ class JDepsReportTask extends DefaultTask {
                 }
 
                 String output = JDepsReportTask.runJDepsOn(baseCmd, file.absolutePath)
+                println("baseCmd from configurations")
                 println(baseCmd.join('\n'))
-                commandOutput << baseCmd.join('\n')
                 if (output) {
                     commandOutput << "\nDependency: ${file.name}\n${output}".toString()
                 }
@@ -128,7 +128,6 @@ class JDepsReportTask extends DefaultTask {
             if (!parentFile.exists()) parentFile.mkdirs()
             File logFile = new File(parentFile, 'jdeps-report.txt')
 
-            logFile << baseCmd.join('\n')
             logFile.withPrintWriter { w -> this.outputs.each { f -> w.println(f) } }
         }
     }
